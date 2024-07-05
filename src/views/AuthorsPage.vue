@@ -13,9 +13,7 @@ export default {
     SideMenu,
   },
   setup() {
-    const { authors, addAuthor, deleteAuthor } = useAuthorApi()
-
-    return { authors, addAuthor, deleteAuthor };
+    return { ...useAuthorApi() };
   },
   data: () => ({
     filterText: '',
@@ -36,13 +34,13 @@ export default {
     },
   },
   methods: {
-    addAuthor(payload) {
-      this.addAuthor(payload);
+    async addAuthor(payload) {
+      await this.create(payload);
 
       this.hideForm();
     },
-    deleteAuthor(payload) {
-      this.deleteAuthor(payload.id);
+    async deleteAuthor(payload) {
+      await this.remove(payload.id);
     },
     hideForm() {
       this.showNewForm = false;
