@@ -22,6 +22,7 @@ export default {
     showNewForm: false,
     showUpdateForm: false,
     authorToEdit: null,
+    localError: null,
   }),
   computed: {
     filteredAuthorList() {
@@ -39,17 +40,30 @@ export default {
   },
   methods: {
     async addAuthor(payload) {
-      await this.create(payload);
-
-      this.hideForm();
+      try {
+        await this.create(payload);
+        this.hideForm();
+        this.localError = null;
+      } catch (e) {
+        this.localError = e.message;
+      }
     },
     async updateAuthor(payload) {
-      await this.modify(payload.id, payload);
-
-      this.hideForm();
+      try {
+        await this.modify(payload.id, payload);
+        this.hideForm();
+        this.localError = null;
+      } catch (e) {
+        this.localError = e.message;
+      }
     },
     async deleteAuthor(payload) {
-      await this.remove(payload.id);
+      try {
+        await this.remove(payload.id);
+        this.localError = null;
+      } catch (e) {
+        this.localError = e.message;
+      }
     },
     editAuthor(author) {
       this.authorToEdit = author;
@@ -79,6 +93,10 @@ export default {
 
         <div class="column">
           <h1 class="title">Autores</h1>
+
+          <div v-if="error || localError" class="notification is-danger">
+            {{ error || localError }}
+          </div>
 
           <nav v-if="!showNewForm && !showUpdateForm" class="level">
             <div class="level-left">
