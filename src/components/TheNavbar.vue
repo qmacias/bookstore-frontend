@@ -11,7 +11,7 @@ export default {
         path: '/authors',
       },
     ],
-    tagline: '¡Bienvenido! Aquí podrás editar los registros de la biblioteca.'
+    tagline: '¡Bienvenido, usuario invitado!'
   }),
 };
 </script>

@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 
-import HomePage from '@/views/HomePage.vue'
+import WelcomePage from '@/views/WelcomePage.vue'
 
 const BASE_TITLE = "Biblioteca Online | ";
 
@@ -9,8 +9,8 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      name: 'home',
-      component: HomePage,
+      name: 'welcome',
+      component: WelcomePage,
       meta: {
         title: `${BASE_TITLE}Inicio`,
       },
