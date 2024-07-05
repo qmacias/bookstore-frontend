@@ -4,6 +4,7 @@ import { useAuthorApi } from "@/useAuthorApi.js";
 import AuthorCard from "@/components/authors/AuthorCard.vue";
 import NewAuthorForm from "@/components/authors/NewAuthorForm.vue";
 import SideMenu from '@/components/SideMenu.vue';
+import UpdateAuthorForm from "@/components/authors/UpdateAuthorForm.vue";
 
 export default {
   name: "AuthorsPage",
@@ -11,6 +12,7 @@ export default {
     AuthorCard,
     NewAuthorForm,
     SideMenu,
+    UpdateAuthorForm,
   },
   setup() {
     return { ...useAuthorApi() };
@@ -18,6 +20,8 @@ export default {
   data: () => ({
     filterText: '',
     showNewForm: false,
+    showUpdateForm: false,
+    authorToEdit: null,
   }),
   computed: {
     filteredAuthorList() {
@@ -39,11 +43,22 @@ export default {
 
       this.hideForm();
     },
+    async updateAuthor(payload) {
+      await this.modify(payload.id, payload);
+
+      this.hideForm();
+    },
     async deleteAuthor(payload) {
       await this.remove(payload.id);
     },
+    editAuthor(author) {
+      this.authorToEdit = author;
+      this.showUpdateForm = true;
+    },
     hideForm() {
       this.showNewForm = false;
+      this.showUpdateForm = false;
+      this.authorToEdit = null;
     },
   },
   mounted() {
@@ -65,7 +80,7 @@ export default {
         <div class="column">
           <h1 class="title">Autores</h1>
 
-          <nav v-if="!showNewForm" class="level">
+          <nav v-if="!showNewForm && !showUpdateForm" class="level">
             <div class="level-left">
               <div class="level-item">
                 <p class="subtitle is-5">
@@ -74,8 +89,7 @@ export default {
               </div>
 
               <p class="level-item">
-                <button class="button is-success"
-                        @click="showNewForm = true">Nuevo</button>
+                <button class="button is-success" @click="showNewForm = true">Nuevo</button>
               </p>
 
               <p class="control">
@@ -86,9 +100,11 @@ export default {
 
           <NewAuthorForm v-if="showNewForm" @add-new-author="addAuthor" @cancel-new-author="hideForm" />
 
+          <UpdateAuthorForm v-else-if="showUpdateForm" :author="authorToEdit" @update-author="updateAuthor" @cancel-update="hideForm" />
+
           <div v-else class="columns is-multiline">
             <div class="column is-full" v-for="item in filteredAuthorList" :key="`item-${item.id}`">
-              <AuthorCard :author="item" @delete-author="deleteAuthor" />
+              <AuthorCard :author="item" @delete-author="deleteAuthor" @edit-author="editAuthor" />
             </div>
           </div>
         </div>
