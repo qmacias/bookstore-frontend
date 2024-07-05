@@ -15,33 +15,36 @@ export function useAuthorApi() {
         authors,
 
         async create(author) {
-            await fetch(API_URL, {
+            const response = await fetch(API_URL, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(author),
             });
+            console.log(response.ok)
 
             await getAll();
         },
 
         async modify(id, author) {
-            await fetch(`${API_URL}/${id}`, {
+            const response = await fetch(`${API_URL}/${id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(author),
             });
+            console.log(response.ok)
 
             await getAll();
         },
 
         async remove(id) {
-            await fetch(`${API_URL}/${id}`, {
+            const response = await fetch(`${API_URL}/${id}`, {
                 method: 'DELETE',
             });
+            console.log(response.ok)
 
             await getAll();
         }

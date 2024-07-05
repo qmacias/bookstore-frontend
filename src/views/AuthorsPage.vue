@@ -93,7 +93,7 @@ export default {
               </p>
 
               <p class="control">
-                <input class="input" type="text" placeholder="Buscar" v-model="filterText">
+                <input id="search" class="input" type="text" placeholder="Buscar" v-model="filterText">
               </p>
             </div>
           </nav>

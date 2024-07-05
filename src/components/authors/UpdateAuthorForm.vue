@@ -26,7 +26,7 @@ export default {
         <label for="name" class="label">Nombre</label>
 
         <div class="control">
-          <input class="input is-large" required
+          <input id="name" class="input is-large" required
                  type="text" placeholder="John Doe" v-model="updatedAuthor.name">
         </div>
       </div>
