@@ -5,14 +5,6 @@ export function useAuthorApi() {
     const authors = ref([]);
     const API_URL = import.meta.env.VITE_BACKEND_API_URL;
 
-    const handleCmdMethodResponse = async (response) => {
-        if (!response.ok) {
-            const errorData = await response.json();
-
-            throw new Error(errorData.error || 'Ha ocurrido un error.');
-        }
-    };
-
     const getAll = async () => {
         authors.value = await fetch(API_URL)
             .then((response) => response.json());
@@ -24,10 +16,20 @@ export function useAuthorApi() {
         error,
         authors,
 
+        clearError() {
+            error.value = null;
+        },
+
+        async handleErrorResponse(response) {
+            if (!response.ok) {
+                const errorData = await response.json();
+
+                throw new Error(errorData.error || 'Ha ocurrido un error.');
+            }
+        },
+
         async create(author) {
             try {
-                error.value = null;
-
                 const response = await fetch(API_URL, {
                     method: 'POST',
                     headers: {
@@ -36,7 +38,7 @@ export function useAuthorApi() {
                     body: JSON.stringify(author),
                 });
 
-                await handleCmdMethodResponse(response);
+                await this.handleErrorResponse(response);
 
                 await getAll();
             } catch (e) {
@@ -47,8 +49,6 @@ export function useAuthorApi() {
 
         async modify(id, author) {
             try {
-                error.value = null;
-
                 const response = await fetch(`${API_URL}/${id}`, {
                     method: 'PUT',
                     headers: {
@@ -57,7 +57,7 @@ export function useAuthorApi() {
                     body: JSON.stringify(author),
                 });
 
-                await handleCmdMethodResponse(response);
+                await this.handleErrorResponse(response);
 
                 await getAll();
             } catch (e) {
@@ -68,13 +68,11 @@ export function useAuthorApi() {
 
         async remove(id) {
             try {
-                error.value = null;
-
                 const response = await fetch(`${API_URL}/${id}`, {
                     method: 'DELETE',
                 });
 
-                await handleCmdMethodResponse(response);
+                await this.handleErrorResponse(response);
 
                 await getAll();
             } catch (e) {

@@ -1,21 +1,23 @@
 <script>
 export default {
   name: "NewAuthorForm",
+  props: {
+    apiError: {
+      type: String,
+      default: null
+    }
+  },
   emits: ['add-new-author', 'cancel-new-author'],
-  data: () => ({
-    newAuthor: {
-      name: '',
-    },
-    formError: null,
-  }),
+  data() {
+    return {
+      newAuthor: {
+        name: '',
+      },
+    }
+  },
   methods: {
     submitForm() {
-      try {
-        this.$emit('add-new-author', this.newAuthor);
-        this.formError = null;
-      } catch (e) {
-        this.formError = e.message;
-      }
+      this.$emit('add-new-author', this.newAuthor);
     },
   },
 };
@@ -23,18 +25,17 @@ export default {
 
 <template>
   <form @submit.prevent="submitForm">
-    <div v-if="formError" class="notification is-danger">
-      {{ formError }}
-    </div>
-
     <div class="field">
       <div class="field">
         <label for="name" class="label">Nombre</label>
 
         <div class="control">
-          <input id="name" class="input is-large"
-                 type="text" placeholder="John Doe" v-model="newAuthor.name">
+          <input id="name" type="text"
+                 placeholder="John Doe" v-model="newAuthor.name"
+                 :class="['input is-large', apiError ? 'is-danger' : '']">
         </div>
+
+        <p v-if="apiError" class="help is-danger">{{ apiError }}</p>
       </div>
 
       <div class="field">

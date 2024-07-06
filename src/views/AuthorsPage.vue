@@ -22,7 +22,6 @@ export default {
     showNewForm: false,
     showUpdateForm: false,
     authorToEdit: null,
-    localError: null,
   }),
   computed: {
     filteredAuthorList() {
@@ -42,27 +41,26 @@ export default {
     async addAuthor(payload) {
       try {
         await this.create(payload);
+
         this.hideForm();
-        this.localError = null;
       } catch (e) {
-        this.localError = e.message;
+        // El error ya se maneja en useAuthorApi
       }
     },
     async updateAuthor(payload) {
       try {
         await this.modify(payload.id, payload);
+
         this.hideForm();
-        this.localError = null;
       } catch (e) {
-        this.localError = e.message;
+        // El error ya se maneja en useAuthorApi
       }
     },
     async deleteAuthor(payload) {
       try {
         await this.remove(payload.id);
-        this.localError = null;
       } catch (e) {
-        this.localError = e.message;
+        // El error ya se maneja en useAuthorApi
       }
     },
     editAuthor(author) {
@@ -73,13 +71,20 @@ export default {
       this.showNewForm = false;
       this.showUpdateForm = false;
       this.authorToEdit = null;
+
+      this.clearError();
+    },
+    showNewAuthorForm() {
+      this.clearError();
+
+      this.showNewForm = true;
     },
   },
   mounted() {
     const route = this.$route;
 
     if (route.query.new) {
-      this.showNewForm = true;
+      this.showNewAuthorForm();
     }
   },
 };
@@ -94,10 +99,6 @@ export default {
         <div class="column">
           <h1 class="title">Autores</h1>
 
-          <div v-if="error || localError" class="notification is-danger">
-            {{ error || localError }}
-          </div>
-
           <nav v-if="!showNewForm && !showUpdateForm" class="level">
             <div class="level-left">
               <div class="level-item">
@@ -107,7 +108,7 @@ export default {
               </div>
 
               <p class="level-item">
-                <button class="button is-success" @click="showNewForm = true">Nuevo</button>
+                <button class="button is-success" @click="showNewAuthorForm">Nuevo</button>
               </p>
 
               <p class="control">
@@ -116,9 +117,20 @@ export default {
             </div>
           </nav>
 
-          <NewAuthorForm v-if="showNewForm" @add-new-author="addAuthor" @cancel-new-author="hideForm" />
+          <NewAuthorForm
+              v-if="showNewForm"
+              :api-error="error"
+              @add-new-author="addAuthor"
+              @cancel-new-author="hideForm"
+          />
 
-          <UpdateAuthorForm v-else-if="showUpdateForm" :author="authorToEdit" @update-author="updateAuthor" @cancel-update="hideForm" />
+          <UpdateAuthorForm
+              v-else-if="showUpdateForm"
+              :api-error="error"
+              :author="authorToEdit"
+              @update-author="updateAuthor"
+              @cancel-update="hideForm"
+          />
 
           <div v-else class="columns is-multiline">
             <div class="column is-full" v-for="item in filteredAuthorList" :key="`item-${item.id}`">
