@@ -42,7 +42,9 @@ export default {
       try {
         await this.create(payload);
 
-        this.hideForm();
+        setTimeout(() => {
+          this.hideForm();
+        }, 500);
       } catch (e) {
         // El error ya se maneja en useAuthorApi
       }
@@ -51,7 +53,9 @@ export default {
       try {
         await this.modify(payload.id, payload);
 
-        this.hideForm();
+        setTimeout(() => {
+          this.hideForm();
+        }, 500);
       } catch (e) {
         // El error ya se maneja en useAuthorApi
       }
@@ -72,10 +76,10 @@ export default {
       this.showUpdateForm = false;
       this.authorToEdit = null;
 
-      this.clearError();
+      this.clearStatus();
     },
     showNewAuthorForm() {
-      this.clearError();
+      this.clearStatus();
 
       this.showNewForm = true;
     },
@@ -120,6 +124,7 @@ export default {
           <NewAuthorForm
               v-if="showNewForm"
               :api-error="error"
+              :api-success="success"
               @add-new-author="addAuthor"
               @cancel-new-author="hideForm"
           />
@@ -127,6 +132,7 @@ export default {
           <UpdateAuthorForm
               v-else-if="showUpdateForm"
               :api-error="error"
+              :api-success="success"
               :author="authorToEdit"
               @update-author="updateAuthor"
               @cancel-update="hideForm"

@@ -5,6 +5,10 @@ export default {
     apiError: {
       type: String,
       default: null
+    },
+    apiSuccess: {
+      type: Boolean,
+      default: false
     }
   },
   emits: ['add-new-author', 'cancel-new-author'],
@@ -31,11 +35,17 @@ export default {
 
         <div class="control">
           <input id="name" type="text"
-                 placeholder="John Doe" v-model="newAuthor.name"
-                 :class="['input is-large', apiError ? 'is-danger' : '']">
+                 :class="['input is-large',
+                          apiError ? 'is-danger' : '',
+                          apiSuccess ? 'is-success' : '']"
+                 placeholder="John Doe" v-model="newAuthor.name">
         </div>
 
-        <p v-if="apiError" class="help is-danger">{{ apiError }}</p>
+        <div class="message-container">
+          <p v-if="apiError" class="help is-danger">{{ apiError }}</p>
+          <p v-else-if="apiSuccess" class="help is-success">Done.</p>
+          <p v-else class="help">&nbsp;</p>
+        </div>
       </div>
 
       <div class="field">
@@ -49,5 +59,11 @@ export default {
 </template>
 
 <style scoped>
+.message-container {
+  min-height: 10px;
+}
 
+.help {
+  transition: all 0.3s ease;
+}
 </style>

@@ -2,8 +2,19 @@ import { ref, onMounted } from 'vue';
 
 export function useAuthorApi() {
     const error = ref(null);
+    const success = ref(false);
+
     const authors = ref([]);
     const API_URL = import.meta.env.VITE_BACKEND_API_URL;
+
+    const clearStatus = () => {
+        error.value = null;
+        success.value = false;
+    }
+
+    const markAsDone = () => {
+        success.value = true;
+    }
 
     const getAll = async () => {
         authors.value = await fetch(API_URL)
@@ -14,11 +25,10 @@ export function useAuthorApi() {
 
     return {
         error,
-        authors,
+        success,
+        clearStatus,
 
-        clearError() {
-            error.value = null;
-        },
+        authors,
 
         async handleErrorResponse(response) {
             if (!response.ok) {
@@ -26,10 +36,14 @@ export function useAuthorApi() {
 
                 throw new Error(errorData.error || 'Ha ocurrido un error.');
             }
+
+            markAsDone()
         },
 
         async create(author) {
             try {
+                clearStatus()
+
                 const response = await fetch(API_URL, {
                     method: 'POST',
                     headers: {
@@ -49,6 +63,8 @@ export function useAuthorApi() {
 
         async modify(id, author) {
             try {
+                clearStatus()
+
                 const response = await fetch(`${API_URL}/${id}`, {
                     method: 'PUT',
                     headers: {
@@ -68,6 +84,8 @@ export function useAuthorApi() {
 
         async remove(id) {
             try {
+                clearStatus()
+
                 const response = await fetch(`${API_URL}/${id}`, {
                     method: 'DELETE',
                 });
